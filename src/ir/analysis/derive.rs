@@ -143,7 +143,14 @@ impl<'ctx> CannotDerive<'ctx> {
                 "    cannot derive {} for blacklisted type",
                 self.derive_trait
             );
-            return CanDerive::No;
+            return self.ctx.parse_callbacks().map_or(CanDerive::No, |callbacks| {
+                let item_name = item.path_for_whitelisting(self.ctx)[1..].join("::");
+                if callbacks.can_blacklisted_derive(&item_name, self.derive_trait) {
+                    CanDerive::Yes
+                } else {
+                    CanDerive::No
+                }
+            });
         }
 
         if self.derive_trait.not_by_name(self.ctx, &item) {

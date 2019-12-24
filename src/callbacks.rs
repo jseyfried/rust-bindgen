@@ -2,6 +2,7 @@
 
 pub use ir::enum_ty::{EnumVariantCustomBehavior, EnumVariantValue};
 pub use ir::int::IntKind;
+pub use ir::analysis::DeriveTrait;
 use std::fmt;
 use std::panic::UnwindSafe;
 
@@ -67,4 +68,7 @@ pub trait ParseCallbacks: fmt::Debug + UnwindSafe {
 
     /// This will be called on every file inclusion, with the full path of the included file.
     fn include_file(&self, _filename: &str) {}
+
+    /// Allows to control which derive traits apply to blacklisted items.
+    fn can_blacklisted_derive(&self, _item_name: &str, _derive_trait: DeriveTrait) -> bool { false }
 }
